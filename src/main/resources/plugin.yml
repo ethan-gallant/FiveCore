@@ -1,0 +1,4 @@
+name: FiveCore
+version: ${project.version}
+main: dev.excl.mc.fivecore.FiveCore
+api-version: 1.13
