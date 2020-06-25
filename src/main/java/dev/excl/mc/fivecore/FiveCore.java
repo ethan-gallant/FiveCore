@@ -1,4 +1,5 @@
 package dev.excl.mc.fivecore;
+
 import java.util.logging.Logger;
 
 import co.aikar.commands.PaperCommandManager;
@@ -18,6 +19,7 @@ public final class FiveCore extends JavaPlugin {
 
     Logger Logger = Bukkit.getLogger();
     ConsoleCommandSender clogger = this.getServer().getConsoleSender(); // must type .sendMessage(color + "Message") after it
+
     @Override
     public void onEnable() {
         clogger.sendMessage(ChatColor.RED + "---------------------------------------");
@@ -26,8 +28,8 @@ public final class FiveCore extends JavaPlugin {
 
         Instance = this;
         /*
-        * Save Default Config File if it doesnt exist
-        * */
+         * Save Default Config File if it doesnt exist
+         * */
         FileConfiguration config = this.getConfig();
         this.saveDefaultConfig();
         System.out.println(config.getString("test"));
@@ -38,8 +40,8 @@ public final class FiveCore extends JavaPlugin {
 
         PaperCommandManager manager = new PaperCommandManager(Instance);
         /*
-        * Command Registration
-        * */
+         * Command Registration
+         * */
         manager.registerCommand(new TpaCommand());
     }
 
@@ -49,9 +51,12 @@ public final class FiveCore extends JavaPlugin {
         clogger.sendMessage(ChatColor.RED + "FiveCore Has Been Disabled");
         clogger.sendMessage(ChatColor.GREEN + "---------------------------------------");
     }
+
     public static FiveCore getInstance() {
         return Instance;
     }
 
-    public static MongoManager getMongoManager() { return mongoManager; }
+    public static MongoManager getMongoManager() {
+        return mongoManager;
+    }
 }
