@@ -1,9 +1,12 @@
 package dev.excl.mc.fivecore;
-
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import co.aikar.commands.PaperCommandManager;
 import dev.excl.mc.fivecore.cmds.teleport.TpaCommand;
+import dev.excl.mc.fivecore.database.CorePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -14,7 +17,7 @@ import dev.excl.mc.fivecore.database.MongoManager;
 
 public final class FiveCore extends JavaPlugin {
     private static FiveCore Instance;
-
+    private static Map<UUID,CorePlayer> corePlayers = new ConcurrentHashMap<>();
     private static MongoManager mongoManager;
 
     Logger Logger = Bukkit.getLogger();
@@ -56,7 +59,10 @@ public final class FiveCore extends JavaPlugin {
         return Instance;
     }
 
-    public static MongoManager getMongoManager() {
-        return mongoManager;
-    }
+    public static MongoManager getMongoManager() { return mongoManager; }
+
+    public static CorePlayer getCorePlayer(UUID uuid) { return corePlayers.get(uuid); }
+
+    public static void putCorePlayer(CorePlayer cp) { corePlayers.put(cp.getUUID(), cp); }
+
 }
