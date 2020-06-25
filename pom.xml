@@ -48,11 +48,11 @@
                     <relocations>
                         <relocation>
                             <pattern>co.aikar.commands</pattern>
-                            <shadedPattern>[YOUR PLUGIN PACKAGE].acf</shadedPattern> <!-- Replace this -->
+                            <shadedPattern>fivecore.acf</shadedPattern> <!-- Replace this -->
                         </relocation>
                         <relocation>
                             <pattern>co.aikar.locales</pattern>
-                            <shadedPattern>[YOUR PLUGIN PACKAGE].locales</shadedPattern> <!-- Replace this -->
+                            <shadedPattern>fivecore.locales</shadedPattern> <!-- Replace this -->
                         </relocation>
                     </relocations>
                 </configuration>
@@ -88,6 +88,11 @@
             <artifactId>paper-api</artifactId>
             <version>1.15.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>acf-paper</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
