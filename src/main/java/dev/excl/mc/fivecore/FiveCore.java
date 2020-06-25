@@ -8,9 +8,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import dev.excl.mc.fivecore.database.MongoManager;
+
 
 public final class FiveCore extends JavaPlugin {
     private static FiveCore Instance;
+
+    private static MongoManager mongoManager;
+
     Logger Logger = Bukkit.getLogger();
     ConsoleCommandSender clogger = this.getServer().getConsoleSender(); // must type .sendMessage(color + "Message") after it
     @Override
@@ -26,7 +31,10 @@ public final class FiveCore extends JavaPlugin {
         FileConfiguration config = this.getConfig();
         this.saveDefaultConfig();
         System.out.println(config.getString("test"));
-
+        /*
+         * Setup MongoDB Instance
+         * */
+        mongoManager = new MongoManager();
 
         PaperCommandManager manager = new PaperCommandManager(Instance);
         /*
@@ -44,4 +52,6 @@ public final class FiveCore extends JavaPlugin {
     public static FiveCore getInstance() {
         return Instance;
     }
+
+    public static MongoManager getMongoManager() { return mongoManager; }
 }
