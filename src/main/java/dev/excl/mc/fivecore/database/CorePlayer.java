@@ -1,8 +1,5 @@
 package dev.excl.mc.fivecore.database;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.mongodb.client.MongoCollection;
 import dev.excl.mc.fivecore.FiveCore;
 import org.bson.Document;
@@ -13,40 +10,43 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Level;
 
 
 public class CorePlayer {
 
-    private class Ban {
-        String reason;
-        String endsAt;
-        String createdAt;
-        Ban(String reason, String endsAt, String createdAt){
+
+    public static class Ban {
+        public String reason;
+        public Date expiresAt;
+        public Date createdAt;
+
+        Ban(String reason, Date expiresAt, Date createdAt) {
             this.reason = reason;
-            this.endsAt = endsAt;
+            this.expiresAt = expiresAt;
             this.createdAt = createdAt;
         }
+
     }
+
     private final Player bukkitPlayer;
     private final MongoManager mongoManager;
 
     public boolean isTeleporting = false;
 
-    public CorePlayer(Player p){
+    public CorePlayer(Player p) {
         this.bukkitPlayer = p;
         this.mongoManager = FiveCore.getMongoManager();
         this.createIfNotExists();
     }
 
-    private void createIfNotExists(){
-        Document playerDocument = mongoManager.getPlayerData().find(Filters.eq("uuid",this.bukkitPlayer.getUniqueId().toString())).first();
+    private void createIfNotExists() {
+        Document playerDocument = mongoManager.getPlayerData().find(Filters.eq("uuid", this.bukkitPlayer.getUniqueId().toString())).first();
 
-        if(playerDocument == null){
+        if (playerDocument == null) {
             MongoCollection<Document> pd = mongoManager.getPlayerData();
-            Document player = new Document("uuid", bukkitPlayer.getUniqueId())
+            Document player = new Document("uuid", bukkitPlayer.getUniqueId().toString())
                     .append("coins", "0")
-                    .append("ips", Collections.singletonList(bukkitPlayer.getAddress().getHostName()))
+                    .append("ips", Collections.singletonList(bukkitPlayer.getAddress().toString()))
                     .append("last_login", new Date())
                     .append("first_joined", new Date())
                     .append("punishments", Collections.emptyList());
@@ -54,17 +54,12 @@ public class CorePlayer {
             return;
         }
 
-        mongoManager.getPlayerData().updateOne(Filters.eq("uuid",this.bukkitPlayer.getUniqueId().toString()),
+        mongoManager.getPlayerData().updateOne(Filters.eq("uuid", this.bukkitPlayer.getUniqueId().toString()),
                 new Document("$set",
                         new Document("last_login", new Date())
                 )
         );
 
-        mongoManager.getPlayerData().updateOne(Filters.eq("uuid",this.bukkitPlayer.getUniqueId().toString()),
-                new Document("$push",
-                        new Document("ips", bukkitPlayer.getAddress().getHostName())
-                )
-        );
 
     }
 
@@ -74,9 +69,25 @@ public class CorePlayer {
 
 
     public Ban getBan() {
-        Document banDocument = mongoManager.getPlayerData().find(Filters.gte("punishments.expires_at", new Date())).first();
-        if(banDocument == null)
+        Document bansDocument = mongoManager.getPlayerData().find(
+                Filters.elemMatch("punishments", Document.parse("{expires_at: { $gt: ISODate() }, pardoned_by: {$exists: false}}"))
+        ).first();
+
+        if (bansDocument == null) {
             return null;
-        return new Ban((String) banDocument.get("message"),(String) banDocument.get("expires_at"), (String) banDocument.get("created_at"));
+        }
+
+        List<Document> banDocs = (List<Document>) bansDocument.get("punishments");
+        Document banDocument = banDocs.get(0);
+        System.out.println("We got this data: " + banDocument.toString());
+        return new Ban(banDocument.getString("message"), banDocument.getDate("expires_at"), banDocument.getDate("created_at"));
+    }
+
+    public void logIP(String ip) {
+        mongoManager.getPlayerData().updateOne(Filters.eq("uuid", this.bukkitPlayer.getUniqueId().toString()),
+                new Document("$addToSet",
+                        new Document("ips", ip)
+                )
+        );
     }
 }

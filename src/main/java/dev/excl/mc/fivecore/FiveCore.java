@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 import co.aikar.commands.PaperCommandManager;
 import dev.excl.mc.fivecore.cmds.teleport.TpaCommand;
 import dev.excl.mc.fivecore.database.CorePlayer;
+import dev.excl.mc.fivecore.listeners.CoreListener;
+import dev.excl.mc.fivecore.listeners.OnPlayerLogin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -40,12 +42,18 @@ public final class FiveCore extends JavaPlugin {
          * Setup MongoDB Instance
          * */
         mongoManager = new MongoManager();
+        mongoManager.connect();
 
         PaperCommandManager manager = new PaperCommandManager(Instance);
         /*
          * Command Registration
          * */
         manager.registerCommand(new TpaCommand());
+
+        /*
+         * Load Listeners
+         * */
+        loadListeners();
     }
 
     @Override
@@ -53,6 +61,13 @@ public final class FiveCore extends JavaPlugin {
         clogger.sendMessage(ChatColor.GREEN + "---------------------------------------");
         clogger.sendMessage(ChatColor.RED + "FiveCore Has Been Disabled");
         clogger.sendMessage(ChatColor.GREEN + "---------------------------------------");
+    }
+
+    private void loadListeners() {
+        CoreListener[] listener = {new OnPlayerLogin()};
+        for (CoreListener coreListener : listener) {
+            coreListener.initEvent();
+        }
     }
 
     public static FiveCore getInstance() {
