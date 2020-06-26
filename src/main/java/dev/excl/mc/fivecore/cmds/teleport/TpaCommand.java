@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TpaCommand extends BaseCommand {
     public static ConcurrentHashMap<UUID, UUID> PendingTeleports = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<UUID, Long> TeleportCooldowns = new ConcurrentHashMap<>();
-    public static List<UUID> Teleporting = new ArrayList<>();
+    public static List<UUID> Teleporting = Collections.synchronizedList(new ArrayList<>());
 
     private static final long timeout = 30 * 20L;
     private static final Long cooldown = 5 * 20L;
