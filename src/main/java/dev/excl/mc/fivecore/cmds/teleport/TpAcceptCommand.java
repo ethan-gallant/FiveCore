@@ -35,11 +35,11 @@ public class TpAcceptCommand extends BaseCommand {
 
             FiveCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(FiveCore.getInstance(), (Runnable) () -> {
                 if(TpaCommand.Teleporting.contains(requester.getUniqueId())){
+                    TpaCommand.Teleporting.remove(requester.getUniqueId());
                     requester.teleportAsync(sender.getLocation());
                     requester.sendMessage("Teleported to player " + sender.getDisplayName());
                     sender.sendMessage("Player " + requester.getDisplayName() + " teleported to you.");
                 }
-                TpaCommand.Teleporting.remove(requester.getUniqueId());
             }, noMoveTime);
             return;
         };
