@@ -36,7 +36,7 @@ public class TpaCommand extends BaseCommand {
             if(TeleportCooldowns.containsKey(sender.getUniqueId())) {
                 final long diff = (System.currentTimeMillis() - TeleportCooldowns.get(sender.getUniqueId())) / 1000L;
                 if (diff < cooldown) {
-                    sender.sendMessage(ChatColor.AQUA + "You must wait at least" + cooldown + " seconds in between teleport requests!");
+                    sender.sendMessage(ChatColor.AQUA + "You must wait at least " + cooldown + " seconds in between teleport requests!");
                     return;
                 }
                 TeleportCooldowns.remove(sender.getUniqueId());
