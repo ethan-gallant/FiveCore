@@ -8,9 +8,12 @@ import org.bukkit.event.player.PlayerMoveEvent;
 public class OnPlayerMove extends CoreListener {
     @EventHandler
     void onPlayerMove(PlayerMoveEvent evt) {
-        if(TpaCommand.Teleporting.contains(evt.getPlayer().getUniqueId())){
-            evt.getPlayer().sendMessage("Teleportation cancelled");
-            TpaCommand.Teleporting.remove(evt.getPlayer().getUniqueId());
+        if (evt.getFrom().getZ() != evt.getTo().getZ() && evt.getFrom().getX() != evt.getTo().getX()) {
+            if(TpaCommand.Teleporting.contains(evt.getPlayer().getUniqueId())){
+                evt.getPlayer().sendMessage("Teleportation cancelled");
+                TpaCommand.Teleporting.remove(evt.getPlayer().getUniqueId());
+            }
         }
+
     }
 }
