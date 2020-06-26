@@ -13,7 +13,7 @@ public class OnPlayerLogin extends CoreListener {
     public void onJoin(PlayerLoginEvent event) {
         CorePlayer cp = new CorePlayer(event.getPlayer());
         cp.logIP(event.getAddress().getHostAddress());
-        CorePlayer.Ban ban = cp.getBan();
+        /*CorePlayer.Ban ban = cp.getBan();
         if(ban != null){
             if(ban.expiresAt == null){
                 event.disallow(PlayerLoginEvent.Result.KICK_BANNED,
@@ -30,7 +30,7 @@ public class OnPlayerLogin extends CoreListener {
                 );
             }
 
-        }
+        }*/
         FiveCore.putCorePlayer(cp);
     }
 }

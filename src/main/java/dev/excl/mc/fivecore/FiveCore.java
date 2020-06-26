@@ -5,10 +5,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import co.aikar.commands.PaperCommandManager;
+import dev.excl.mc.fivecore.cmds.teleport.TpAcceptCommand;
 import dev.excl.mc.fivecore.cmds.teleport.TpaCommand;
+import dev.excl.mc.fivecore.cmds.teleport.TpAcceptCommand;
+
 import dev.excl.mc.fivecore.database.CorePlayer;
 import dev.excl.mc.fivecore.listeners.CoreListener;
 import dev.excl.mc.fivecore.listeners.OnPlayerLogin;
+import dev.excl.mc.fivecore.listeners.OnPlayerMove;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -49,6 +53,8 @@ public final class FiveCore extends JavaPlugin {
          * Command Registration
          * */
         manager.registerCommand(new TpaCommand());
+        manager.registerCommand(new TpAcceptCommand());
+
 
         /*
          * Load Listeners
@@ -64,7 +70,7 @@ public final class FiveCore extends JavaPlugin {
     }
 
     private void loadListeners() {
-        CoreListener[] listener = {new OnPlayerLogin()};
+        CoreListener[] listener = {new OnPlayerLogin(), new OnPlayerMove()};
         for (CoreListener coreListener : listener) {
             coreListener.initEvent();
         }

@@ -1,36 +1,34 @@
 package dev.excl.mc.fivecore.database;
 
-import com.mongodb.client.MongoCollection;
 import dev.excl.mc.fivecore.FiveCore;
 import org.bson.Document;
 import com.mongodb.client.model.Filters;
 import org.bukkit.entity.Player;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
+import java.util.*;
 
 public class CorePlayer {
 
 
     public static class Ban {
-        public String reason;
+        public String message;
         public Date expiresAt;
         public Date createdAt;
+        public String type;
+        public String ip;
 
-        Ban(String reason, Date expiresAt, Date createdAt) {
-            this.reason = reason;
+        Punishment(String message, Date expiresAt, Date createdAt, String type , String ip) {
+            this.message = message;
             this.expiresAt = expiresAt;
             this.createdAt = createdAt;
+            this.type = type;
         }
 
     }
 
     private final Player bukkitPlayer;
     private final MongoManager mongoManager;
-
+    private Punishment[] punishments;
     public boolean isTeleporting = false;
 
     public CorePlayer(Player p) {
@@ -43,7 +41,6 @@ public class CorePlayer {
         Document playerDocument = mongoManager.getPlayerData().find(Filters.eq("uuid", this.bukkitPlayer.getUniqueId().toString())).first();
 
         if (playerDocument == null) {
-            MongoCollection<Document> pd = mongoManager.getPlayerData();
             Document player = new Document("uuid", bukkitPlayer.getUniqueId().toString())
                     .append("coins", "0")
                     .append("ips", Collections.singletonList(bukkitPlayer.getAddress().toString()))
@@ -68,19 +65,8 @@ public class CorePlayer {
     }
 
 
-    public Ban getBan() {
-        Document bansDocument = mongoManager.getPlayerData().find(
-                Filters.elemMatch("punishments", Document.parse("{expires_at: { $gt: ISODate() }, pardoned_by: {$exists: false}}"))
-        ).first();
-
-        if (bansDocument == null) {
-            return null;
-        }
-
-        List<Document> banDocs = (List<Document>) bansDocument.get("punishments");
-        Document banDocument = banDocs.get(0);
-        System.out.println("We got this data: " + banDocument.toString());
-        return new Ban(banDocument.getString("message"), banDocument.getDate("expires_at"), banDocument.getDate("created_at"));
+    public Punishment isBanned() {
+        return null;
     }
 
     public void logIP(String ip) {
@@ -90,4 +76,6 @@ public class CorePlayer {
                 )
         );
     }
+
+
 }
