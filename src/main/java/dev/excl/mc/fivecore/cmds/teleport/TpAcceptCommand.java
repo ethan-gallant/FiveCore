@@ -32,11 +32,8 @@ public class TpAcceptCommand extends BaseCommand {
                 if(TpaCommand.Teleporting.contains(requester.getUniqueId())){
                     requester.teleportAsync(sender.getLocation());
                     requester.sendMessage("Teleported to player " + sender.getDisplayName());
+                    sender.sendMessage("Player " + requester.getDisplayName() + " teleported to you.");
                 }
-                else{
-                    requester.sendMessage("Teleportation Cancelled.");
-                }
-
                 TpaCommand.Teleporting.remove(requester.getUniqueId());
             }, noMoveTime);
             return;
