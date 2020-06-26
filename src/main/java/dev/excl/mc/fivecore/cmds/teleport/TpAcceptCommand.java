@@ -29,7 +29,7 @@ public class TpAcceptCommand extends BaseCommand {
 
             FiveCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(FiveCore.getInstance(), (Runnable) () -> {
                 TpaCommand.Teleporting.add(requester.getUniqueId());
-            }, 20L);
+            }, 40L);
             TpaCommand.PendingTeleports.remove(sender.getUniqueId());
 
             FiveCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(FiveCore.getInstance(), (Runnable) () -> {
