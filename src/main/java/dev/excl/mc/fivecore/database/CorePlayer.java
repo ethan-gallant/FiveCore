@@ -10,7 +10,7 @@ import java.util.*;
 public class CorePlayer {
 
 
-    public static class Ban {
+    public static class Punishment {
         public String message;
         public Date expiresAt;
         public Date createdAt;

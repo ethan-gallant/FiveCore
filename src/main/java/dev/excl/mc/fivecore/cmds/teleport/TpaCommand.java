@@ -64,9 +64,9 @@ public class TpaCommand extends BaseCommand {
 
     static void sendTPARequest(Player sender, Player target) {
         sender.sendMessage(ChatColor.RED + "Teleport Request Sent to " + ChatColor.GREEN + target.getDisplayName());
-        sender.sendMessage(ChatColor.RED + "Pending Teleport Request From " + ChatColor.GREEN + target.getDisplayName());
-        sender.sendMessage(ChatColor.RED + "Type " + ChatColor.GREEN + "/tpaccept" + ChatColor.RED + " to accept");
-        sender.sendMessage(ChatColor.RED + "Type " + ChatColor.DARK_RED + "/tpdeny" + ChatColor.RED + " to deny");
+        target.sendMessage(ChatColor.RED + "Pending Teleport Request From " + ChatColor.GREEN + sender.getDisplayName());
+        target.sendMessage(ChatColor.RED + "Type " + ChatColor.GREEN + "/tpaccept" + ChatColor.RED + " to accept");
+        target.sendMessage(ChatColor.RED + "Type " + ChatColor.DARK_RED + "/tpdeny" + ChatColor.RED + " to deny");
         PendingTeleports.put(target.getUniqueId(), sender.getUniqueId());
     }
 }
