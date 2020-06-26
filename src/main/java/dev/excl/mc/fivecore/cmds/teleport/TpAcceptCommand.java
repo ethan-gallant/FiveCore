@@ -26,6 +26,8 @@ public class TpAcceptCommand extends BaseCommand {
             }
             TpaCommand.Teleporting.add(requester.getUniqueId());
 
+            TpaCommand.PendingTeleports.remove(sender.getUniqueId());
+
             FiveCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(FiveCore.getInstance(), (Runnable) () -> {
                 if(TpaCommand.Teleporting.contains(requester.getUniqueId())){
                     requester.teleportAsync(sender.getLocation());
@@ -37,6 +39,7 @@ public class TpAcceptCommand extends BaseCommand {
 
                 TpaCommand.Teleporting.remove(requester.getUniqueId());
             }, noMoveTime);
+            return;
         };
         sender.sendMessage("It appears that you don't have any pending teleport requests.");
     }
