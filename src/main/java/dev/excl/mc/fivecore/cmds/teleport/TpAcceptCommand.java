@@ -26,6 +26,10 @@ public class TpAcceptCommand extends BaseCommand {
             }
             sender.sendMessage("Request Accepted");
             requester.sendMessage("Teleporting... Do not move or teleportation will be cancelled.");
+
+            FiveCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(FiveCore.getInstance(), (Runnable) () -> {
+                TpaCommand.Teleporting.add(requester.getUniqueId());
+            }, 20L);
             TpaCommand.Teleporting.add(requester.getUniqueId());
             TpaCommand.PendingTeleports.remove(sender.getUniqueId());
 
