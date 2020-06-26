@@ -24,8 +24,9 @@ public class TpAcceptCommand extends BaseCommand {
                 sender.sendMessage("It appears that player is no longer online.");
                 return;
             }
+            sender.sendMessage("Request Accepted");
+            requester.sendMessage("Teleporting... Do not move or teleportation will be cancelled.");
             TpaCommand.Teleporting.add(requester.getUniqueId());
-
             TpaCommand.PendingTeleports.remove(sender.getUniqueId());
 
             FiveCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(FiveCore.getInstance(), (Runnable) () -> {
