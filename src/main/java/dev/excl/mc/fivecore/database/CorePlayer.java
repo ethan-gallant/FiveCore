@@ -4,78 +4,56 @@ import dev.excl.mc.fivecore.FiveCore;
 import org.bson.Document;
 import com.mongodb.client.model.Filters;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
+
 public class CorePlayer {
-
-
-    public static class Punishment {
-        public String message;
-        public Date expiresAt;
-        public Date createdAt;
-        public String type;
-        public String ip;
-
-        Punishment(String message, Date expiresAt, Date createdAt, String type , String ip) {
-            this.message = message;
-            this.expiresAt = expiresAt;
-            this.createdAt = createdAt;
-            this.type = type;
-        }
-
-    }
 
     private final Player bukkitPlayer;
     private final MongoManager mongoManager;
-    private Punishment[] punishments;
-    public boolean isTeleporting = false;
 
     public CorePlayer(Player p) {
         this.bukkitPlayer = p;
         this.mongoManager = FiveCore.getMongoManager();
-        this.createIfNotExists();
     }
 
-    private void createIfNotExists() {
-        Document playerDocument = mongoManager.getPlayerData().find(Filters.eq("uuid", this.bukkitPlayer.getUniqueId().toString())).first();
 
-        if (playerDocument == null) {
-            Document player = new Document("uuid", bukkitPlayer.getUniqueId().toString())
-                    .append("coins", "0")
-                    .append("ips", Collections.singletonList(bukkitPlayer.getAddress().toString()))
-                    .append("last_login", new Date())
-                    .append("first_joined", new Date())
-                    .append("punishments", Collections.emptyList());
-            mongoManager.getPlayerData().insertOne(player);
-            return;
-        }
-
-        mongoManager.getPlayerData().updateOne(Filters.eq("uuid", this.bukkitPlayer.getUniqueId().toString()),
-                new Document("$set",
-                        new Document("last_login", new Date())
-                )
-        );
-
-
-    }
 
     public UUID getUUID() {
         return bukkitPlayer.getUniqueId();
     }
 
-
-    public Punishment isBanned() {
-        return null;
+    public int getStat(String statName) {
+        Document playerObj =  mongoManager.getPlayerData().find(Filters.eq("uuid", this.bukkitPlayer.getUniqueId().toString())).first();
+        if (playerObj == null || playerObj.isEmpty()) {
+            System.out.println("Player was not found in db");
+            return 0;
+        }
+        Document stats = (Document) playerObj.get("stats");
+        if(stats == null) {
+            return 0;
+        }
+        try {
+            return stats.getInteger(statName);
+        } catch (ClassCastException e)
+        {
+            return 0;
+        }
     }
 
-    public void logIP(String ip) {
-        mongoManager.getPlayerData().updateOne(Filters.eq("uuid", this.bukkitPlayer.getUniqueId().toString()),
-                new Document("$addToSet",
-                        new Document("ips", ip)
-                )
-        );
+    public void adjustStat(String statName, int adjustValue) {
+        String uuid = this.bukkitPlayer.getUniqueId().toString();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                mongoManager.getPlayerData().findOneAndUpdate(Filters.eq("uuid", uuid),
+                        new Document("$inc",
+                                new Document("stats." + statName, adjustValue)
+                        )
+                );
+            }
+        }.runTaskAsynchronously(FiveCore.getInstance());
     }
-
-
 }

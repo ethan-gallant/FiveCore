@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 @CommandAlias("tpa|teleportask|tpask")
-public class TpaCommand extends BaseCommand {
+public class TpACommand extends BaseCommand {
     public static ConcurrentHashMap<UUID, UUID> PendingTeleports = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<UUID, Long> TeleportCooldowns = new ConcurrentHashMap<>();
     public static List<UUID> Teleporting = Collections.synchronizedList(new ArrayList<>());
@@ -25,9 +25,9 @@ public class TpaCommand extends BaseCommand {
     @Default
     @CommandCompletion("@players")
     @Syntax("[player]")
-    @Description("Teleports to another Player")
-
-    public static void onTPA(Player sender, OnlinePlayer targetOP) {
+    @CommandPermission("fivecore.teleport.ask")
+    @Description("Request to teleport to another player")
+    public static void onTpA(Player sender, OnlinePlayer targetOP) {
         Player target = targetOP.getPlayer();
         if (sender.getUniqueId() == target.getUniqueId()) {
             sender.sendMessage(ChatColor.RED + "You can not send a teleport yourself, ya goof ;)");

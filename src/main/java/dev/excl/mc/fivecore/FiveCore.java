@@ -5,14 +5,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import co.aikar.commands.PaperCommandManager;
+import dev.excl.mc.fivecore.api.EconomyImplementer;
+import dev.excl.mc.fivecore.api.VaultHook;
 import dev.excl.mc.fivecore.cmds.teleport.TpAcceptCommand;
-import dev.excl.mc.fivecore.cmds.teleport.TpaCommand;
-import dev.excl.mc.fivecore.cmds.teleport.TpAcceptCommand;
+import dev.excl.mc.fivecore.cmds.teleport.TpACommand;
 
+import dev.excl.mc.fivecore.cmds.teleport.TpCommand;
 import dev.excl.mc.fivecore.database.CorePlayer;
 import dev.excl.mc.fivecore.listeners.CoreListener;
+import dev.excl.mc.fivecore.listeners.OnPlayerDeath;
 import dev.excl.mc.fivecore.listeners.OnPlayerLogin;
 import dev.excl.mc.fivecore.listeners.OnPlayerMove;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -22,11 +26,13 @@ import dev.excl.mc.fivecore.database.MongoManager;
 
 
 public final class FiveCore extends JavaPlugin {
+    private EconomyImplementer economyImplementer;
     private static FiveCore Instance;
     private static Map<UUID,CorePlayer> corePlayers = new ConcurrentHashMap<>();
     private static MongoManager mongoManager;
+    private static VaultHook vaultHook;
 
-    Logger Logger = Bukkit.getLogger();
+    Logger logger = Bukkit.getLogger();
     ConsoleCommandSender clogger = this.getServer().getConsoleSender(); // must type .sendMessage(color + "Message") after it
 
     @Override
@@ -36,6 +42,11 @@ public final class FiveCore extends JavaPlugin {
         clogger.sendMessage(ChatColor.RED + "---------------------------------------");
 
         Instance = this;
+
+        economyImplementer = new EconomyImplementer();
+
+        vaultHook = new VaultHook();
+        vaultHook.hook();
         /*
          * Save Default Config File if it doesnt exist
          * */
@@ -52,8 +63,9 @@ public final class FiveCore extends JavaPlugin {
         /*
          * Command Registration
          * */
-        manager.registerCommand(new TpaCommand());
+        manager.registerCommand(new TpACommand());
         manager.registerCommand(new TpAcceptCommand());
+        manager.registerCommand(new TpCommand());
 
 
         /*
@@ -64,13 +76,14 @@ public final class FiveCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        vaultHook.unhook();
         clogger.sendMessage(ChatColor.GREEN + "---------------------------------------");
         clogger.sendMessage(ChatColor.RED + "FiveCore Has Been Disabled");
         clogger.sendMessage(ChatColor.GREEN + "---------------------------------------");
     }
 
     private void loadListeners() {
-        CoreListener[] listener = {new OnPlayerLogin(), new OnPlayerMove()};
+        CoreListener[] listener = {new OnPlayerLogin(), new OnPlayerMove(), new OnPlayerDeath()};
         for (CoreListener coreListener : listener) {
             coreListener.initEvent();
         }
@@ -85,5 +98,7 @@ public final class FiveCore extends JavaPlugin {
     public static CorePlayer getCorePlayer(UUID uuid) { return corePlayers.get(uuid); }
 
     public static void putCorePlayer(CorePlayer cp) { corePlayers.put(cp.getUUID(), cp); }
+
+    public EconomyImplementer getEconomyImplementer(){ return economyImplementer; };
 
 }
